@@ -11,64 +11,58 @@ namespace Snake
     {
         static void Main(string[] args)
         {
-            Console.WindowHeight = 16;
-            Console.WindowWidth = 32;
-            int screenwidth = Console.WindowWidth;
-            int screenheight = Console.WindowHeight;
+            AppWindow appWindow = new AppWindow(32,16);
             Random randomnummer = new Random();
             int score = 5;
             int gameover = 0;
-            pixel hoofd = new pixel();
-            hoofd.xpos = screenwidth/2;
-            hoofd.ypos = screenheight/2;
-            hoofd.schermkleur = ConsoleColor.Red;
+            Pixel snakeHead = new Pixel(appWindow.GetWidth()/2,appWindow.GetHeight()/2,ConsoleColor.Red);
             string movement = "RIGHT";
             List<int> xposlijf = new List<int>();
             List<int> yposlijf = new List<int>();
-            int berryx = randomnummer.Next(0, screenwidth);
-            int berryy = randomnummer.Next(0, screenheight);
+            int berryx = randomnummer.Next(0, appWindow.GetWidth());
+            int berryy = randomnummer.Next(0, appWindow.GetHeight());
             DateTime tijd = DateTime.Now;
             DateTime tijd2 = DateTime.Now;
             string buttonpressed = "no";
             while (true)
             {
                 Console.Clear();
-                if (hoofd.xpos == screenwidth-1 || hoofd.xpos == 0 ||hoofd.ypos == screenheight-1 || hoofd.ypos == 0)
+                if (snakeHead.GetXpos() == appWindow.GetWidth()-1 || snakeHead.GetXpos() == 0 ||snakeHead.GetYpos() == appWindow.GetHeight()-1 || snakeHead.GetYpos() == 0)
                 { 
                     gameover = 1;
                 }
-                for (int i = 0;i< screenwidth; i++)
+                for (int i = 0;i< appWindow.GetWidth(); i++)
                 {
                     Console.SetCursorPosition(i, 0);
                     Console.Write("■");
                 }
-                for (int i = 0; i < screenwidth; i++)
+                for (int i = 0; i < appWindow.GetWidth(); i++)
                 {
-                    Console.SetCursorPosition(i, screenheight -1);
+                    Console.SetCursorPosition(i, appWindow.GetHeight() -1);
                     Console.Write("■");
                 }
-                for (int i = 0; i < screenheight; i++)
+                for (int i = 0; i < appWindow.GetHeight(); i++)
                 {
                     Console.SetCursorPosition(0, i);
                     Console.Write("■");
                 }
-                for (int i = 0; i < screenheight; i++)
+                for (int i = 0; i < appWindow.GetHeight(); i++)
                 {
-                    Console.SetCursorPosition(screenwidth - 1, i);
+                    Console.SetCursorPosition(appWindow.GetWidth() - 1, i);
                     Console.Write("■");
                 }
                 Console.ForegroundColor = ConsoleColor.Green;
-                if (berryx == hoofd.xpos && berryy == hoofd.ypos)
+                if (berryx == snakeHead.GetXpos() && berryy == snakeHead.GetYpos())
                 {
                     score++;
-                    berryx = randomnummer.Next(1, screenwidth-2);
-                    berryy = randomnummer.Next(1, screenheight-2);
+                    berryx = randomnummer.Next(1, appWindow.GetWidth()-2);
+                    berryy = randomnummer.Next(1, appWindow.GetHeight()-2);
                 } 
                 for (int i = 0; i < xposlijf.Count(); i++)
                 {
                     Console.SetCursorPosition(xposlijf[i], yposlijf[i]);
                     Console.Write("■");
-                    if (xposlijf[i] == hoofd.xpos && yposlijf[i] == hoofd.ypos)
+                    if (xposlijf[i] == snakeHead.GetXpos() && yposlijf[i] == snakeHead.GetYpos())
                     {
                         gameover = 1;
                     }
@@ -77,8 +71,8 @@ namespace Snake
                 {
                     break;
                 }
-                Console.SetCursorPosition(hoofd.xpos, hoofd.ypos);
-                Console.ForegroundColor = hoofd.schermkleur;
+                Console.SetCursorPosition(snakeHead.GetXpos(), snakeHead.GetYpos());
+                Console.ForegroundColor = snakeHead.GetColor();
                 Console.Write("■");
                 Console.SetCursorPosition(berryx, berryy);
                 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -115,21 +109,21 @@ namespace Snake
                         }
                     }
                 }
-                xposlijf.Add(hoofd.xpos);
-                yposlijf.Add(hoofd.ypos);
+                xposlijf.Add(snakeHead.GetXpos());
+                yposlijf.Add(snakeHead.GetYpos());
                 switch (movement)
                 {
                     case "UP":
-                        hoofd.ypos--;
+                        snakeHead.SetYpos(snakeHead.GetYpos() - 1);
                         break;
                     case "DOWN":
-                        hoofd.ypos++;
+                        snakeHead.SetYpos(snakeHead.GetYpos() + 1);
                         break;
                     case "LEFT":
-                        hoofd.xpos--;
+                        snakeHead.SetXpos(snakeHead.GetXpos() - 1);
                         break;
                     case "RIGHT":
-                        hoofd.xpos++;
+                        snakeHead.SetXpos(snakeHead.GetXpos() + 1);
                         break;
                 }
                 if (xposlijf.Count() > score)
@@ -138,15 +132,42 @@ namespace Snake
                     yposlijf.RemoveAt(0);
                 }
             }
-            Console.SetCursorPosition(screenwidth / 5, screenheight / 2);
+            Console.SetCursorPosition(appWindow.GetWidth() / 5, appWindow.GetHeight() / 2);
             Console.WriteLine("Game over, Score: "+ score);
-            Console.SetCursorPosition(screenwidth / 5, screenheight / 2 +1);
+            Console.SetCursorPosition(appWindow.GetWidth() / 5, appWindow.GetHeight() / 2 +1);
         }
-        class pixel
+        class Pixel
         {
-            public int xpos { get; set; }
-            public int ypos { get; set; }
-            public ConsoleColor schermkleur { get; set; }
+            private int _xPos;
+            private int _yPos;
+            private ConsoleColor _color;
+
+            public Pixel(int xPos, int yPos, ConsoleColor color)
+            {
+                _xPos = xPos;
+                _yPos = yPos;
+                _color = color;
+            }
+
+            public int GetXpos() { return _xPos; }
+            public void SetXpos(int xPos) { _xPos = xPos; }
+            public int GetYpos() { return _yPos; }
+            public void SetYpos(int yPos) { _yPos = yPos; }
+            public ConsoleColor GetColor() { return _color; }
+            public void SetColor(ConsoleColor color) { _color = color; }
+        }
+
+        private class AppWindow
+        {
+            public AppWindow(int width, int height)
+            {
+                Console.WindowWidth = width;
+                Console.WindowHeight = height;
+            }
+
+            public int GetWidth() { return Console.WindowWidth; }
+            public int GetHeight() { return Console.WindowHeight; }
+            
         }
     }
 }

@@ -12,3 +12,4 @@ C:\Users\tomha\RiderProjects\snake\snake\obj\Debug\net8.0\refint\snake.dll
 C:\Users\tomha\RiderProjects\snake\snake\obj\Debug\net8.0\snake.pdb
 C:\Users\tomha\RiderProjects\snake\snake\obj\Debug\net8.0\snake.genruntimeconfig.cache
 C:\Users\tomha\RiderProjects\snake\snake\obj\Debug\net8.0\ref\snake.dll
+C:\Users\tomha\RiderProjects\snake\snake\obj\Debug\net8.0\snake.sourcelink.json
