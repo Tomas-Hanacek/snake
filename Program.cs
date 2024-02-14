@@ -12,15 +12,16 @@ namespace Snake
         static void Main(string[] args)
         {
             AppWindow appWindow = new AppWindow(32,16);
-            Random randomnummer = new Random();
+            Random random = new Random();
             int score = 5;
             int gameover = 0;
             Pixel snakeHead = new Pixel(appWindow.GetWidth()/2,appWindow.GetHeight()/2,ConsoleColor.Red);
-            string movement = "RIGHT";
+            Movement movement = Movement.Right;
             List<int> xposlijf = new List<int>();
             List<int> yposlijf = new List<int>();
-            int berryx = randomnummer.Next(0, appWindow.GetWidth());
-            int berryy = randomnummer.Next(0, appWindow.GetHeight());
+            Pixel food = new Pixel(random.Next(0, appWindow.GetWidth()), random.Next(0, appWindow.GetHeight()));
+            int berryx = random.Next(0, appWindow.GetWidth());
+            int berryy = random.Next(0, appWindow.GetHeight());
             DateTime tijd = DateTime.Now;
             DateTime tijd2 = DateTime.Now;
             string buttonpressed = "no";
@@ -52,11 +53,13 @@ namespace Snake
                     Console.Write("■");
                 }
                 Console.ForegroundColor = ConsoleColor.Green;
-                if (berryx == snakeHead.GetXpos() && berryy == snakeHead.GetYpos())
+                if (food.GetXpos() == snakeHead.GetXpos() && food.GetYpos() == snakeHead.GetYpos())
                 {
                     score++;
-                    berryx = randomnummer.Next(1, appWindow.GetWidth()-2);
-                    berryy = randomnummer.Next(1, appWindow.GetHeight()-2);
+                    food.SetXpos(random.Next(1, appWindow.GetWidth()-2));
+                    food.SetYpos(random.Next(1, appWindow.GetHeight()-2));
+                    //berryx = random.Next(1, appWindow.GetWidth()-2);
+                    //berryy = random.Next(1, appWindow.GetHeight()-2);
                 } 
                 for (int i = 0; i < xposlijf.Count(); i++)
                 {
@@ -87,24 +90,24 @@ namespace Snake
                     {
                         ConsoleKeyInfo toets = Console.ReadKey(true);
                         //Console.WriteLine(toets.Key.ToString());
-                        if (toets.Key.Equals(ConsoleKey.UpArrow) && movement != "DOWN" && buttonpressed == "no")
+                        if (toets.Key.Equals(ConsoleKey.UpArrow) && movement != Movement.Down && buttonpressed == "no")
                         {
-                            movement = "UP";
+                            movement = Movement.Up;
                             buttonpressed = "yes";
                         }
-                        if (toets.Key.Equals(ConsoleKey.DownArrow) && movement != "UP" && buttonpressed == "no")
+                        if (toets.Key.Equals(ConsoleKey.DownArrow) && movement != Movement.Up && buttonpressed == "no")
                         {
-                            movement = "DOWN";
+                            movement = Movement.Down;
                             buttonpressed = "yes";
                         }
-                        if (toets.Key.Equals(ConsoleKey.LeftArrow) && movement != "RIGHT" && buttonpressed == "no")
+                        if (toets.Key.Equals(ConsoleKey.LeftArrow) && movement != Movement.Right && buttonpressed == "no")
                         {
-                            movement = "LEFT";
+                            movement = Movement.Left;
                             buttonpressed = "yes";
                         }
-                        if (toets.Key.Equals(ConsoleKey.RightArrow) && movement != "LEFT" && buttonpressed == "no")
+                        if (toets.Key.Equals(ConsoleKey.RightArrow) && movement != Movement.Left && buttonpressed == "no")
                         {
-                            movement = "RIGHT";
+                            movement = Movement.Right;
                             buttonpressed = "yes";
                         }
                     }
@@ -113,16 +116,16 @@ namespace Snake
                 yposlijf.Add(snakeHead.GetYpos());
                 switch (movement)
                 {
-                    case "UP":
+                    case Movement.Up:
                         snakeHead.SetYpos(snakeHead.GetYpos() - 1);
                         break;
-                    case "DOWN":
+                    case Movement.Down:
                         snakeHead.SetYpos(snakeHead.GetYpos() + 1);
                         break;
-                    case "LEFT":
+                    case Movement.Left:
                         snakeHead.SetXpos(snakeHead.GetXpos() - 1);
                         break;
-                    case "RIGHT":
+                    case Movement.Right:
                         snakeHead.SetXpos(snakeHead.GetXpos() + 1);
                         break;
                 }
@@ -148,6 +151,12 @@ namespace Snake
                 _yPos = yPos;
                 _color = color;
             }
+            
+            public Pixel(int xPos, int yPos)
+            {
+                _xPos = xPos;
+                _yPos = yPos;
+            }
 
             public int GetXpos() { return _xPos; }
             public void SetXpos(int xPos) { _xPos = xPos; }
@@ -169,5 +178,14 @@ namespace Snake
             public int GetHeight() { return Console.WindowHeight; }
             
         }
+        
+        public enum Movement
+        {
+            Left,
+            Right,
+            Up,
+            Down
+        }
+
     }
 }
