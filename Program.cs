@@ -16,15 +16,14 @@ namespace Snake
             int score = 5;
             int gameover = 0;
             Pixel snakeHead = new Pixel(appWindow.GetWidth()/2,appWindow.GetHeight()/2,ConsoleColor.Red);
+            //Snake snake = new Snake(snakeHead,);
             Movement movement = Movement.Right;
-            List<int> xposlijf = new List<int>();
-            List<int> yposlijf = new List<int>();
+            List<int> xPosBody = new List<int>();
+            List<int> yPosBody = new List<int>();
             Pixel food = new Pixel(random.Next(0, appWindow.GetWidth()), random.Next(0, appWindow.GetHeight()));
-            int berryx = random.Next(0, appWindow.GetWidth());
-            int berryy = random.Next(0, appWindow.GetHeight());
-            DateTime tijd = DateTime.Now;
-            DateTime tijd2 = DateTime.Now;
-            string buttonpressed = "no";
+            DateTime time;
+            DateTime time2;
+            var buttonpressed = false;
             while (true)
             {
                 Console.Clear();
@@ -58,14 +57,12 @@ namespace Snake
                     score++;
                     food.SetXpos(random.Next(1, appWindow.GetWidth()-2));
                     food.SetYpos(random.Next(1, appWindow.GetHeight()-2));
-                    //berryx = random.Next(1, appWindow.GetWidth()-2);
-                    //berryy = random.Next(1, appWindow.GetHeight()-2);
                 } 
-                for (int i = 0; i < xposlijf.Count(); i++)
+                for (int i = 0; i < xPosBody.Count(); i++)
                 {
-                    Console.SetCursorPosition(xposlijf[i], yposlijf[i]);
+                    Console.SetCursorPosition(xPosBody[i], yPosBody[i]);
                     Console.Write("■");
-                    if (xposlijf[i] == snakeHead.GetXpos() && yposlijf[i] == snakeHead.GetYpos())
+                    if (xPosBody[i] == snakeHead.GetXpos() && yPosBody[i] == snakeHead.GetYpos())
                     {
                         gameover = 1;
                     }
@@ -77,43 +74,42 @@ namespace Snake
                 Console.SetCursorPosition(snakeHead.GetXpos(), snakeHead.GetYpos());
                 Console.ForegroundColor = snakeHead.GetColor();
                 Console.Write("■");
-                Console.SetCursorPosition(berryx, berryy);
+                Console.SetCursorPosition(food.GetXpos(), food.GetYpos());
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("■");
-                tijd = DateTime.Now;
-                buttonpressed = "no";
+                time = DateTime.Now;
+                buttonpressed = false;
                 while (true)
                 {
-                    tijd2 = DateTime.Now;
-                    if (tijd2.Subtract(tijd).TotalMilliseconds > 500) { break; }
+                    time2 = DateTime.Now;
+                    if (time2.Subtract(time).TotalMilliseconds > 500) { break; }
                     if (Console.KeyAvailable)
                     {
                         ConsoleKeyInfo toets = Console.ReadKey(true);
-                        //Console.WriteLine(toets.Key.ToString());
-                        if (toets.Key.Equals(ConsoleKey.UpArrow) && movement != Movement.Down && buttonpressed == "no")
+                        if (toets.Key.Equals(ConsoleKey.UpArrow) && movement != Movement.Down && buttonpressed == false)
                         {
                             movement = Movement.Up;
-                            buttonpressed = "yes";
+                            buttonpressed = true;
                         }
-                        if (toets.Key.Equals(ConsoleKey.DownArrow) && movement != Movement.Up && buttonpressed == "no")
+                        if (toets.Key.Equals(ConsoleKey.DownArrow) && movement != Movement.Up && buttonpressed == false)
                         {
                             movement = Movement.Down;
-                            buttonpressed = "yes";
+                            buttonpressed = true;
                         }
-                        if (toets.Key.Equals(ConsoleKey.LeftArrow) && movement != Movement.Right && buttonpressed == "no")
+                        if (toets.Key.Equals(ConsoleKey.LeftArrow) && movement != Movement.Right && buttonpressed == false)
                         {
                             movement = Movement.Left;
-                            buttonpressed = "yes";
+                            buttonpressed = true;
                         }
-                        if (toets.Key.Equals(ConsoleKey.RightArrow) && movement != Movement.Left && buttonpressed == "no")
+                        if (toets.Key.Equals(ConsoleKey.RightArrow) && movement != Movement.Left && buttonpressed == false)
                         {
                             movement = Movement.Right;
-                            buttonpressed = "yes";
+                            buttonpressed = true;
                         }
                     }
                 }
-                xposlijf.Add(snakeHead.GetXpos());
-                yposlijf.Add(snakeHead.GetYpos());
+                xPosBody.Add(snakeHead.GetXpos());
+                yPosBody.Add(snakeHead.GetYpos());
                 switch (movement)
                 {
                     case Movement.Up:
@@ -129,16 +125,32 @@ namespace Snake
                         snakeHead.SetXpos(snakeHead.GetXpos() + 1);
                         break;
                 }
-                if (xposlijf.Count() > score)
+                if (xPosBody.Count() > score)
                 {
-                    xposlijf.RemoveAt(0);
-                    yposlijf.RemoveAt(0);
+                    xPosBody.RemoveAt(0);
+                    yPosBody.RemoveAt(0);
                 }
             }
             Console.SetCursorPosition(appWindow.GetWidth() / 5, appWindow.GetHeight() / 2);
             Console.WriteLine("Game over, Score: "+ score);
             Console.SetCursorPosition(appWindow.GetWidth() / 5, appWindow.GetHeight() / 2 +1);
         }
+
+        class Snake
+        {
+            private Pixel _snakeHead;
+            private List<Pixel> _snakeBody;
+
+            public Snake(Pixel head, List<Pixel> body)
+            {
+                _snakeHead = head;
+                _snakeBody = body;
+            }
+
+            public Pixel GetHead() { return _snakeHead; }
+            public List<Pixel> GetBody() { return _snakeBody; }
+        }
+        
         class Pixel
         {
             private int _xPos;
@@ -176,7 +188,6 @@ namespace Snake
 
             public int GetWidth() { return Console.WindowWidth; }
             public int GetHeight() { return Console.WindowHeight; }
-            
         }
         
         public enum Movement
